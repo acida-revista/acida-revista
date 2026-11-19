@@ -744,9 +744,9 @@ La responsabilidad periodística tampoco escapa a este análisis, no puede queda
 
 Lo que está en juego no es sólo la calidad del periodismo, sino cómo construimos nuestras conversaciones públicas. Salir de esta crisis no implica retroceder ni clausurar debates, sino recomponer los lazos de confianza entre medios, ciudadanía y Estado. La información no puede seguir siendo un campo de batalla, debe volver a ser un derecho, una herramienta para comprender el mundo y transformarlo entre todos.`,
     paginaMobile: 6,
-    paginaDesktop: null,
+    paginaDesktop: 4,
     paginaMobileFin: 7,
-    paginaDesktopFin: null,
+    paginaDesktopFin: 4,
   },
   {
     id: 'informatica-para-no-informaticos',
