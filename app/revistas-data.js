@@ -42,7 +42,10 @@ export const REVISTAS = [
     titulo: 'Exprés N°2',
     subtitulo: '¿Dónde estamos en el mundo de los píxeles?',
     fecha: 'Junio 2026',
-    images: { mobile: { basePath: `${BASE}/revistas/expres-n2`, count: 24, w: 2160, h: 3840 } },
+    images: {
+      mobile: { basePath: `${BASE}/revistas/expres-n2`, count: 24, w: 2160, h: 3840 },
+      desktop: { basePath: `${BASE}/revistas/expres-n2-desktop`, count: 12, w: 4320, h: 3840 },
+    },
     disponible: true,
     tilt: 'card-tilt-pos',
   },

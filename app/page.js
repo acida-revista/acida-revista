@@ -67,6 +67,30 @@ const EDICIONES_TRACKING = [0.02, 0.18, 0.30, 0.34, 0.46, 0.28, 0.34, 0.05, 0];
 const CARD_SCRIM = 'linear-gradient(to top, rgba(8,8,16,0.94) 0%, rgba(8,8,16,0.82) 38%, rgba(8,8,16,0.25) 64%, rgba(8,8,16,0) 88%)';
 const coverStyle = (slug) => ({ backgroundImage: `${CARD_SCRIM}, url(${BASE}/covers/${slug}.webp)` });
 
+/* Covers are decorative backgrounds, so CSS would otherwise fetch every one
+   as soon as the page mounts. Start each request only near its card. */
+function useDeferredCover(slug) {
+  const ref = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setLoaded(true);
+        observer.disconnect();
+      },
+      { rootMargin: '300px 0px' }
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, style: loaded ? coverStyle(slug) : { backgroundImage: CARD_SCRIM } };
+}
+
 /* ─── STARBURST SVG ─── */
 function Starburst({ className, count = 40, len = 150 }) {
   const lines = Array.from({ length: count }, (_, i) => {
@@ -114,6 +138,7 @@ function Marquee({ items, reverse = false, variant = 'dark' }) {
 function CountdownCard({ revista, index }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [expired, setExpired] = useState(false);
+  const deferredCover = useDeferredCover(revista.slug);
 
   useEffect(() => {
     const calc = () => {
@@ -134,7 +159,8 @@ function CountdownCard({ revista, index }) {
       <Link
         href={`/ediciones/${revista.slug}`}
         className="revista-card reveal"
-        style={{ transitionDelay: `${index * 0.12}s`, ...coverStyle(revista.slug) }}
+        ref={deferredCover.ref}
+        style={{ transitionDelay: `${index * 0.12}s`, ...deferredCover.style }}
       >
         <div className="card-edition">{revista.subtitulo}</div>
         <div className={titleClass(revista.titulo)}>{acidicText(revista.titulo)}</div>
@@ -146,7 +172,7 @@ function CountdownCard({ revista, index }) {
 
   return (
     <div className={revista.tilt}>
-      <div className="revista-card revista-card--countdown reveal" style={{ transitionDelay: `${index * 0.12}s`, ...coverStyle(revista.slug) }}>
+      <div ref={deferredCover.ref} className="revista-card revista-card--countdown reveal" style={{ transitionDelay: `${index * 0.12}s`, ...deferredCover.style }}>
         <div className="card-edition">{revista.subtitulo}</div>
         <div className={titleClass(revista.titulo)}>{acidicText(revista.titulo)}</div>
         <div className="card-pronto" style={{ color: 'rgba(255,248,236,0.6)' }}>Próximamente</div>
@@ -155,6 +181,27 @@ function CountdownCard({ revista, index }) {
         </div>
         <div className="card-fecha">{revista.fecha}</div>
       </div>
+    </div>
+  );
+}
+
+function EditionCard({ revista, index }) {
+  const deferredCover = useDeferredCover(revista.slug);
+
+  return (
+    <div className={revista.tilt}>
+      {revista.isNew && <span className="card-badge">NUEVA</span>}
+      <Link
+        href={`/ediciones/${revista.slug}`}
+        className="revista-card reveal"
+        ref={deferredCover.ref}
+        style={{ transitionDelay: `${index * 0.12}s`, ...deferredCover.style }}
+      >
+        <div className="card-edition">{revista.subtitulo}</div>
+        <div className={titleClass(revista.titulo)}>{acidicText(revista.titulo)}</div>
+        <div className="card-fecha">{revista.fecha}</div>
+        <div className="card-cta">Leer →</div>
+      </Link>
     </div>
   );
 }
@@ -370,7 +417,15 @@ export default function Home() {
                 </span>
                 <span className="sr-only">QUIÉNES SOMOS</span>
               </h2>
-              <img src={`${BASE}/elemento.png`} className="quienes-elemento-new" aria-hidden="true" />
+              <img
+                src={`${BASE}/elemento.webp`}
+                className="quienes-elemento-new"
+                alt=""
+                width="640"
+                height="640"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
             <div className="quienes-right reveal" style={{ transitionDelay: '0.15s' }}>
@@ -425,7 +480,7 @@ export default function Home() {
       {/* ═══ REPOSITORIO ═══ */}
       <section id="ediciones" className="repositorio">
         <div className="repositorio-blob-bg" aria-hidden="true" />
-        <img src={`${BASE}/tipo%20acido%20azul.png`} className="repositorio-mascota" aria-hidden="true" />
+        <img src={`${BASE}/tipo%20acido%20azul.png`} className="repositorio-mascota" alt="" width="818" height="608" loading="lazy" decoding="async" />
 
         <div className="repositorio-inner">
           <h2 className="repositorio-title reveal">{trackedText('EDICIONES', EDICIONES_TRACKING)}</h2>
@@ -438,21 +493,7 @@ export default function Home() {
               if (r.releaseDate && new Date() < r.releaseDate) {
                 return <CountdownCard key={r.id} revista={r} index={i} />;
               }
-              return (
-                <div key={r.id} className={r.tilt}>
-                  {r.isNew && <span className="card-badge">NUEVA</span>}
-                  <Link
-                    href={`/ediciones/${r.slug}`}
-                    className="revista-card reveal"
-                    style={{ transitionDelay: `${i * 0.12}s`, ...coverStyle(r.slug) }}
-                  >
-                    <div className="card-edition">{r.subtitulo}</div>
-                    <div className={titleClass(r.titulo)}>{acidicText(r.titulo)}</div>
-                    <div className="card-fecha">{r.fecha}</div>
-                    <div className="card-cta">Leer →</div>
-                  </Link>
-                </div>
-              );
+              return <EditionCard key={r.id} revista={r} index={i} />;
             })}
 
             {/* Coming soon */}
@@ -489,7 +530,7 @@ export default function Home() {
 
       {/* ═══ FOOTER ═══ */}
       <footer className="footer">
-        <img src={`${BASE}/footer.png`} alt="ÁCIDA" className="footer-logo-img" />
+        <img src={`${BASE}/footer.png`} alt="ÁCIDA" className="footer-logo-img" width="2393" height="978" loading="lazy" decoding="async" />
         <div className="footer-right">
           <div className="footer-links">
             <a href="#inicio">Inicio</a>

@@ -43,6 +43,20 @@ export default function ImageViewer({ revista, onClose }) {
   const [flip, setFlip] = useState(null); // { target, direction } | null
   const [flipActive, setFlipActive] = useState(false);
 
+  // Keep the immediately adjacent spreads in the browser cache. This lets the
+  // page-turn start with the next image already decoded instead of waiting for
+  // a network request after the reader clicks.
+  useEffect(() => {
+    if (isMobile !== false) return;
+    [current - 1, current + 1]
+      .filter((page) => page >= minPage && page <= maxPage)
+      .forEach((page) => {
+        const image = new Image();
+        image.decoding = 'async';
+        image.src = `${basePath}/page-${String(page).padStart(2, '0')}.webp`;
+      });
+  }, [basePath, current, isMobile, maxPage, minPage]);
+
   const startFlip = (direction) => {
     if (flip) return;
     const target = direction === 'next' ? current + 1 : current - 1;
