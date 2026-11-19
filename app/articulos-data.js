@@ -778,9 +778,9 @@ El MCP vino a solucionar ese choque de mundos. Es la pieza que faltaba para que 
 
 Y, si lo pensamos bien, este artículo buscó funcionar de la misma manera. Quiso ser un protocolo entre el mundo de los sistemas y el de quienes lo miran desde afuera; una forma de traducir lo complejo para volver a conectar y recuperar, al fin y al cabo, esa sana costumbre de enseñar.`,
     paginaMobile: 9,
-    paginaDesktop: null,
+    paginaDesktop: 5,
     paginaMobileFin: 11,
-    paginaDesktopFin: null,
+    paginaDesktopFin: 6,
   },
   {
     id: 'las-consecuencias-de-aparentar-existir',
@@ -813,9 +813,9 @@ En la era de Instagram en la que todo se tilda de performático, tras vivir nues
 Bibliografía
 Marx, K. (2015). Manuscritos económico-filosóficos de 1844. Ediciones Colihue SRL.`,
     paginaMobile: 13,
-    paginaDesktop: null,
+    paginaDesktop: 7,
     paginaMobileFin: 16,
-    paginaDesktopFin: null,
+    paginaDesktopFin: 8,
   },
   {
     id: 'en-todos-lados-todo-el-tiempo',
@@ -846,9 +846,9 @@ Después de mirar queda recordar. Y el problema no es recordar a través de foto
 Bibliografía
 Sontag S. (2003) “Ante el dolor de los demás”`,
     paginaMobile: 17,
-    paginaDesktop: null,
+    paginaDesktop: 9,
     paginaMobileFin: 18,
-    paginaDesktopFin: null,
+    paginaDesktopFin: 9,
   },
 
   // ───────── LA CALLE ─────────

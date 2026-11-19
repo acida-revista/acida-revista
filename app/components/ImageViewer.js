@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { ARTICULOS } from '../articulos-data';
 
 export default function ImageViewer({ revista, onClose }) {
   const searchParams = useSearchParams();
-  const startMobile = parseInt(searchParams.get('pm'), 10) || 1;
-  const startDesktop = parseInt(searchParams.get('pd'), 10) || 1;
-  const finMobile = parseInt(searchParams.get('pmFin'), 10) || null;
-  const finDesktop = parseInt(searchParams.get('pdFin'), 10) || null;
+  const legacyStartMobile = parseInt(searchParams.get('pm'), 10) || 1;
+  const legacyStartDesktop = parseInt(searchParams.get('pd'), 10) || 1;
+  const legacyFinMobile = parseInt(searchParams.get('pmFin'), 10) || null;
+  const legacyFinDesktop = parseInt(searchParams.get('pdFin'), 10) || null;
+  const articulo = ARTICULOS.find((item) => item.id === searchParams.get('articulo'));
 
   const [isMobile, setIsMobile] = useState(null);
   useEffect(() => {
@@ -22,8 +24,12 @@ export default function ImageViewer({ revista, onClose }) {
   const [current, setCurrent] = useState(1);
   const [fullEdition, setFullEdition] = useState(false);
 
-  const rawStart = usingDesktop ? startDesktop : startMobile;
-  const rawFin = usingDesktop ? finDesktop : finMobile;
+  const rawStart = usingDesktop
+    ? articulo?.paginaDesktop ?? legacyStartDesktop
+    : articulo?.paginaMobile ?? legacyStartMobile;
+  const rawFin = usingDesktop
+    ? articulo?.paginaDesktopFin ?? legacyFinDesktop
+    : articulo?.paginaMobileFin ?? legacyFinMobile;
   const hasRange = rawFin != null && rawFin >= rawStart;
   const minPage = !fullEdition && hasRange ? Math.max(1, rawStart) : 1;
   const maxPage = !fullEdition && hasRange ? Math.min(count, rawFin) : count;

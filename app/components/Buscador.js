@@ -35,14 +35,8 @@ function highlight(text, query) {
 
 function edicionLink(articulo) {
   const revista = REVISTAS.find((r) => r.slug === articulo.edicionSlug);
-  const params = new URLSearchParams();
-  if (articulo.paginaMobile) params.set('pm', articulo.paginaMobile);
-  if (articulo.paginaDesktop) params.set('pd', articulo.paginaDesktop);
-  if (articulo.paginaMobileFin) params.set('pmFin', articulo.paginaMobileFin);
-  if (articulo.paginaDesktopFin) params.set('pdFin', articulo.paginaDesktopFin);
-  const qs = params.toString();
   return {
-    href: `/ediciones/${articulo.edicionSlug}${qs ? `?${qs}` : ''}`,
+    href: `/ediciones/${articulo.edicionSlug}?articulo=${encodeURIComponent(articulo.id)}`,
     tituloEdicion: revista ? revista.titulo : articulo.edicionSlug,
   };
 }
