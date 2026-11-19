@@ -42,6 +42,7 @@ export default function ImageViewer({ revista, onClose }) {
 
   const [flip, setFlip] = useState(null); // { target, direction } | null
   const [flipActive, setFlipActive] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   // Keep the immediately adjacent spreads in the browser cache. This lets the
   // page-turn start with the next image already decoded instead of waiting for
@@ -61,6 +62,7 @@ export default function ImageViewer({ revista, onClose }) {
     if (flip) return;
     const target = direction === 'next' ? current + 1 : current - 1;
     if (target < minPage || target > maxPage) return;
+    setIsPageLoading(true);
     setFlip({ target, direction });
   };
   const goPrev = () => startFlip('prev');
@@ -169,9 +171,17 @@ export default function ImageViewer({ revista, onClose }) {
                   alt={`${revista.titulo} — página ${flip ? flip.target : current}`}
                   width={w}
                   height={h}
+                  onLoad={() => setIsPageLoading(false)}
+                  onError={() => setIsPageLoading(false)}
                   draggable={false}
                 />
               </div>
+              {isPageLoading && (
+                <div className="viewer-loader" role="status" aria-live="polite">
+                  <img src="/Logos/Logo%20blanco.svg" alt="" aria-hidden="true" />
+                  <span>Cargando edición</span>
+                </div>
+              )}
               {flip && (
                 <div
                   className={`viewer-flip-page viewer-flip-page--overlay viewer-flip-page--${flip.direction}${flipActive ? ' is-active' : ''}`}
